@@ -1,0 +1,55 @@
+COMPILER RPNC
+
+IGNORECASE
+
+CHARACTERS
+	digit = '0'..'9'.
+	letter	= 'A'..'z'.
+	cr  = '\r'.
+	lf  = '\n'.
+	tab = '\t'.
+
+TOKENS
+	ident  = letter {letter | digit | "_"}.
+	number = digit {digit}.
+
+COMMENTS FROM "/*" TO "*/" NESTED
+COMMENTS FROM "//" TO cr lf
+
+IGNORE cr + lf + tab
+
+PRODUCTIONS
+	RPNC (. String sourceCode = ""; .) = (. String s = "", s1, s2, s3, s4; .)
+		ident (. s1 = t.val + "\t"; .) ":=" NumExpr<out s2> ";" (. sourceCode += s1 + s2; sourceCode += ":=\n"; .)
+		{ ident (. s3 = t.val + "\t"; s4 = ""; .) ":=" NumExpr<out s4> ";" (. s += s3 + s4; s += ":=\n"; .) }
+		(.
+			sourceCode += s;
+			System.out.println(sourceCode);
+		.)
+	.
+	
+	NumExpr<out String s> = (. String s1, s2, op; s = ""; .)
+		Term<out s1> (. s += s1; .)
+		{
+			("+" (. op = "+\t"; .) | "-" (. op = "-\t"; .))
+			NumExpr<out s2>
+			(. s += s2 + op; .)
+		}
+	.
+
+	Term<out String s> = (. String s1, s2, op; s = ""; .)
+		Multiplier<out s1> (. s += s1; .)
+		{
+			("*" (. op = "*\t"; .) | "/" (. op = "/\t"; .))
+			Term<out s2>
+			(. s += s2 + op; .)
+		}
+	.
+
+	Multiplier<out String s> = (. s = ""; .) (
+		ident (. s = t.val + "\t"; .) |
+		number (. s = t.val + "\t"; .) |
+		(. String temp; .) "(" NumExpr<out temp> ")" (. s = temp; .)
+	).
+
+END RPNC.
