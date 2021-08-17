@@ -1,0 +1,18 @@
+!! n number of Fibonacci
+n = 0;
+print("Enter n:");
+input(n);
+
+fib_a = 0;
+fib_b = 1;
+
+i = 0;
+while (i <= n) {
+    print("[" . i . "] = " . fib_a . " ");
+
+    curr = fib_a + fib_b;
+    fib_a = fib_b;
+    fib_b = curr;
+
+    i+=1;
+}

@@ -1,0 +1,12 @@
+!! Power of two (from n to m)
+n = 0;
+m = 0;
+print("Enter start:");
+input(n);
+print("Enter end:");
+input(m);
+
+while(n <= m){
+    print("2 ^ " . n . " = " . 2 ** n);
+    n+=1;
+}
